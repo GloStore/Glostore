@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glo Store - Productos Exclusivos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #f8f8f8;
+      color: #333;
+    }
+    
+    .bg-glo-black {
+      background-color: #121212;
+    }
+    
+    .bg-glo-white {
+      background-color: #f5f5f5;
+    }
+    
+    .text-glo-black {
+      color: #121212;
+    }
+    
+    .text-glo-white {
+      color: #f5f5f5;
+    }
+    
+    .product-card {
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .hero-section {
+      background: linear-gradient(rgba(18, 18, 18, 0.7), rgba(18, 18, 18, 0.7)),
+        url('https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80');
+      background-size: cover;
+      background-position: center;
+    }
+    
+    .instagram-btn {
+      background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+    }
+    
+    .tiktok-btn {
+      background: #000000;
+    }
+    
+    .tiktok-btn:hover {
+      background: #333333;
+    }
+    
+    /* Estilos para el carrito */
+    .cart-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      width: 350px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      color: #333;
+    }
+    
+    .cart-item {
+      border-bottom: 1px solid #eee;
+      padding: 10px;
+    }
+    
+    /* Estilos para la búsqueda */
+    .search-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      width: 300px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      color: #333;
+    }
+    
+    .search-result {
+      padding: 10px;
+      cursor: pointer;
+    }
+    
+    .search-result:hover {
+      background-color: #f5f5f5;
+    }
+    
+    /* Animación para el badge del carrito */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    .cart-badge {
+      animation: pulse 0.5s ease;
+    }
+    
+    /* Estilos para el modal de login/signup */
+    .auth-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .auth-container {
+      background-color: white;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .auth-tabs {
+      display: flex;
+    }
+    
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 15px;
+      cursor: pointer;
+      background-color: #f1f1f1;
+      transition: background-color 0.3s;
+    }
+    
+    .auth-tab.active {
+      background-color: white;
+      font-weight: bold;
+    }
+    
+    .auth-content {
+      padding: 20px;
+    }
+    
+    .auth-form {
+      display: none;
+    }
+    
+    .auth-form.active {
+      display: block;
+    }
+    
+    .password-requirements {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+    
+    .requirement {
+      display: flex;
+      align-items: center;
+      margin-bottom: 3px;
+    }
+    
+    .requirement.valid {
+      color: #4CAF50;
+    }
+    
+    .requirement.invalid {
+      color: #F44336;
+    }
+    
+    /* Estilos para el checkout */
+    .checkout-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .checkout-container {
+      background-color: white;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .checkout-header {
+      padding: 15px;
+      background-color: #121212;
+      color: white;
+      text-align: center;
+    }
+    
+    .checkout-body {
+      padding: 20px;
+    }
+    
+    .checkout-summary {
+      border: 1px solid #eee;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+    
+    .checkout-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    
+    .checkout-total {
+      border-top: 1px solid #eee;
+      padding-top: 10px;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    
+    .payment-methods {
+      margin-top: 20px;
+    }
+    
+    .payment-method {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    .payment-method.selected {
+      border-color: #121212;
+      background-color: #f9f9f9;
+    }
+    
+    .payment-method input {
+      margin-right: 10px;
+    }
+    
+    .checkout-footer {
+      padding: 15px;
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+
+<body class="bg-glo-white">
+  <!-- Header/Navbar -->
+  <header class="bg-glo-black text-glo-white sticky top-0 z-50 shadow-md">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center">
+          <h1 class="text-2xl font-bold">GLO STORE</h1>
+        </div>
+        <nav class="hidden md:flex space-x-8">
+          <a href="#inicio" class="hover:text-gray-300 transition">Inicio</a>
+          <a href="#zapatillas" class="hover:text-gray-300 transition">Zapatillas</a>
+          <a href="#perfumes" class="hover:text-gray-300 transition">Perfumes</a>
+          <a href="#tech" class="hover:text-gray-300 transition">Tecnología</a>
+          <a href="#contacto" class="hover:text-gray-300 transition">Contacto</a>
+        </nav>
+        <div class="flex items-center space-x-4 relative">
+          <!-- Buscador -->
+          <div class="relative">
+            <input type="text" id="searchInput" placeholder="Buscar..." 
+                   class="bg-gray-800 text-white px-4 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-600 w-40 md:w-64">
+            <div id="searchResults" class="search-dropdown"></div>
+          </div>
+          
+          <!-- Botón de Login/Signup -->
+          <button id="authButton" class="hover:text-gray-300">
+            <i class="fas fa-user"></i>
+          </button>
+          
+          <!-- Carrito con badge -->
+          <div class="relative">
+            <a href="#" id="cartButton" class="hover:text-gray-300 relative">
+              <i class="fas fa-shopping-cart"></i>
+              <span id="cartBadge" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+            </a>
+            <!-- Dropdown del carrito -->
+            <div id="cartDropdown" class="cart-dropdown p-4">
+              <h3 class="font-bold text-lg mb-4">Tu Carrito</h3>
+              <div id="cartItems"></div>
+              <div class="mt-4 pt-4 border-t">
+                <p class="font-semibold">Total: <span id="cartTotal">$0.00</span></p>
+                <button id="checkoutBtn" class="bg-glo-black text-white w-full py-2 rounded mt-2 hover:bg-gray-800 transition">Finalizar Compra</button>
+                <button id="clearCartBtn" class="text-gray-600 text-sm mt-2 hover:text-gray-800">Vaciar carrito</button>
+              </div>
+            </div>
+          </div>
+          
+          <button class="md:hidden">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Modal de Login/Signup -->
+  <div id="authModal" class="auth-modal">
+    <div class="auth-container">
+      <div class="auth-tabs">
+        <div class="auth-tab active" data-tab="login">Iniciar Sesión</div>
+        <div class="auth-tab" data-tab="signup">Registrarse</div>
+      </div>
+      <div class="auth-content">
+        <!-- Formulario de Login -->
+        <form id="loginForm" class="auth-form active">
+          <div class="mb-4">
+            <label for="loginEmail" class="block mb-2">Email</label>
+            <input type="email" id="loginEmail" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-600" required>
+          </div>
+          <div class="mb-4">
+            <label for="loginPassword" class="block mb-2">Contraseña</label>
+            <input type="password" id="loginPassword" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-600" required>
+          </div>
+          <button type="submit" class="bg-glo-black text-white w-full py-2 rounded hover:bg-gray-800 transition">Iniciar Sesión</button>
+          <p id="loginError" class="text-red-500 text-sm mt-2 hidden">Email o contraseña incorrectos</p>
+        </form>
+        
+        <!-- Formulario de Signup -->
+        <form id="signupForm" class="auth-form">
+          <div class="mb-4">
+            <label for="signupEmail" class="block mb-2">Email</label>
+            <input type="email" id="signupEmail" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-600" required>
+          </div>
+          <div class="mb-4">
+            <label for="signupPassword" class="block mb-2">Contraseña</label>
+            <input type="password" id="signupPassword" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-600" required>
+            <div class="password-requirements">
+              <p class="font-semibold">La contraseña debe contener:</p>
+              <div id="lengthReq" class="requirement invalid">
+                <i class="fas fa-circle mr-1" style="font-size: 6px;"></i>
+                <span>Al menos 8 caracteres</span>
+              </div>
+              <div id="uppercaseReq" class="requirement invalid">
+                <i class="fas fa-circle mr-1" style="font-size: 6px;"></i>
+                <span>Al menos una mayúscula</span>
+              </div>
+              <div id="specialReq" class="requirement invalid">
+                <i class="fas fa-circle mr-1" style="font-size: 6px;"></i>
+                <span>Al menos un carácter especial</span>
+              </div>
+            </div>
+          </div>
+          <div class="mb-4">
+            <label for="confirmPassword" class="block mb-2">Confirmar Contraseña</label>
+            <input type="password" id="confirmPassword" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-600" required>
+            <p id="passwordMatchError" class="text-red-500 text-sm mt-1 hidden">Las contraseñas no coinciden</p>
+          </div>
+          <button type="submit" class="bg-glo-black text-white w-full py-2 rounded hover:bg-gray-800 transition">Registrarse</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Checkout -->
+  <div id="checkoutModal" class="checkout-modal">
+    <div class="checkout-container">
+      <div class="checkout-header">
+        <h3>Finalizar Compra</h3>
+      </div>
+      <div class="checkout-body">
+        <div class="checkout-summary">
+          <h4 class="font-bold mb-4">Resumen de la Compra</h4>
+          <div id="checkoutItems"></div>
+          <div id="checkoutTotal" class="checkout-total"></div>
+        </div>
+        
+        <div class="payment-methods">
+          <h4 class="font-bold mb-4">Método de Pago</h4>
+          <div class="payment-method selected">
+            <input type="radio" name="paymentMethod" id="creditCard" checked>
+            <label for="creditCard">Tarjeta de Crédito/Débito</label>
+          </div>
+          <div class="payment-method">
+            <input type="radio" name="paymentMethod" id="paypal">
+            <label for="paypal">PayPal</label>
+          </div>
+          <div class="payment-method">
+            <input type="radio" name="paymentMethod" id="bankTransfer">
+            <label for="bankTransfer">Transferencia Bancaria</label>
+          </div>
+        </div>
+        
+        <div id="creditCardForm" class="mt-6">
+          <div class="mb-4">
+            <label for="cardNumber" class="block mb-2">Número de Tarjeta</label>
+            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-600">
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label for="expiryDate" class="block mb-2">Fecha de Expiración</label>
+              <input type="text" id="expiryDate" placeholder="MM/AA" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-600">
+            </div>
+            <div>
+              <label for="cvv" class="block mb-2">CVV</label>
+              <input type="text" id="cvv" placeholder="123" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-600">
+            </div>
+          </div>
+          <div class="mb-4 mt-4">
+            <label for="cardName" class="block mb-2">Nombre en la Tarjeta</label>
+            <input type="text" id="cardName" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-600">
+          </div>
+        </div>
+        
+        <div id="paypalForm" class="mt-6 hidden">
+          <p>Serás redirigido a PayPal para completar el pago.</p>
+        </div>
+        
+        <div id="bankTransferForm" class="mt-6 hidden">
+          <p>Recibirás los detalles de la transferencia bancaria por email.</p>
+        </div>
+      </div>
+      <div class="checkout-footer">
+        <button id="cancelCheckout" class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100">Cancelar</button>
+        <button id="confirmCheckout" class="bg-glo-black text-white px-4 py-2 rounded hover:bg-gray-800">Confirmar Pago</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section id="inicio" class="hero-section text-glo-white py-20 md:py-32">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-4xl md:text-6xl font-bold mb-6">EXCLUSIVIDAD Y ESTILO</h2>
+      <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">Los productos más codiciados en un solo lugar</p>
+      <a href="#productos"
+        class="bg-white text-glo-black px-8 py-3 font-semibold rounded-full hover:bg-gray-200 transition">Explorar</a>
+    </div>
+  </section>
+
+  <!-- Featured Products -->
+  <section id="productos" class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12 text-glo-black">PRODUCTOS DESTACADOS</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Product 1 -->
+        <div class="product-card bg-white rounded-lg overflow-hidden" data-id="1" data-name="Nike Air Force 1 White" data-price="49.99" data-category="zapatillas">
+          <div class="relative overflow-hidden h-64">
+            <img src="https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/b7d9211c-26e7-431a-ac24-b0540fb3c00f/AIR+FORCE+1+%2707.png"
+                 alt="Nike Air Force 1" class="w-full h-full object-contain p-4">
+            <div class="absolute top-4 right-4 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">NUEVO
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Nike Air Force 1 White</h3>
+            <p class="text-gray-600 mb-4">El clásico que nunca pasa de moda</p>
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-lg">$49.99</span>
+              <button class="add-to-cart bg-glo-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">Añadir al carrito</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="product-card bg-white rounded-lg overflow-hidden" data-id="2" data-name="Dior Sauvage" data-price="39.99" data-category="perfumes">
+          <div class="relative overflow-hidden h-64">
+            <img src="https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcQj0k5olcmx2VzcurPIvPAwl2EvBoqJSEtiK8YxSicjP5_KCK8TpjRjqjmpXCuq5bbE79dqoE9P3tdyOONTfBcIQs2ONtfdK6TWR-hruyO1sxH27HxhVT1GBJg"
+                 alt="Dior Sauvage" class="w-full h-full object-contain p-4">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Dior Sauvage</h3>
+            <p class="text-gray-600 mb-4">Frescura y elegancia en cada spray</p>
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-lg">$39.99</span>
+              <button class="add-to-cart bg-glo-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">Añadir al carrito</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="product-card bg-white rounded-lg overflow-hidden" data-id="3" data-name="AirPods Pro 2" data-price="49.99" data-category="tech">
+          <div class="relative overflow-hidden h-64">
+            <img src="https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/MTJV3?wid=1144&hei=1144&fmt=jpeg&qlt=90&.v=1694014871985"
+                 alt="AirPods Pro 2" class="w-full h-full object-contain p-4">
+            <div class="absolute top-4 right-4 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">MÁS
+              VENDIDO</div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">AirPods Pro 2</h3>
+            <p class="text-gray-600 mb-4">Sonido de calidad superior</p>
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-lg">$49.99</span>
+              <button class="add-to-cart bg-glo-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">Añadir al carrito</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sneakers Section -->
+  <section id="zapatillas" class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12 text-glo-black">ZAPATILLAS</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Sneaker 1 -->
+        <div class="product-card bg-white rounded-lg overflow-hidden" data-id="4" data-name="Nike Air Force 1 White" data-price="49.99" data-category="zapatillas">
+          <div class="relative overflow-hidden h-64">
+            <img src="https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/b7d9211c-26e7-431a-ac24-b0540fb3c00f/AIR+FORCE+1+%2707.png"
+                 alt="Nike Air Force 1 White" class="w-full h-full object-contain p-4">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Nike Air Force 1 White</h3>
+            <p class="text-gray-600 mb-4">El clásico en color blanco</p>
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-lg">$49.99</span>
+              <button class="add-to-cart bg-glo-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">Añadir al carrito</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sneaker 2 -->
+        <div class="product-card bg-white rounded-lg overflow-hidden" data-id="5" data-name="Nike Air Force 1 Black" data-price="49.99" data-category="zapatillas">
+          <div class="relative overflow-hidden h-64">
+            <img src="https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/fc4622c4-2769-4665-aa6e-42c974a7705e/AIR+FORCE+1+%2707.png"
+                 alt="Nike Air Force 1 Black" class="w-full h-full object-contain p-4">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Nike Air Force 1 Black</h3>
+            <p class="text-gray-600 mb-4">Elegancia en color negro</p>
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-lg">$49.99</span>
+              <button class="add-to-cart bg-glo-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">Añadir al carrito</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sneaker 3 -->
+        <div class="product-card bg-white rounded-lg overflow-hidden" data-id="6" data-name="Nike TN Black" data-price="59.99" data-category="zapatillas">
+          <div class="relative overflow-hidden h-64">
+            <img src="https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/877d30e7-4880-46f8-aa71-6704eb7d944d/AIR+MAX+PLUS.png"
+                 alt="Nike Air Force 1 Red" class="w-full h-full object-contain p-4">
+            <div class="absolute top-4 right-4 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">LIMITADO
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Nike TN Black</h3>
+            <p class="text-gray-600 mb-4">Estilo moderno y fresco</p>
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-lg">$59.99</span>
+              <button class="add-to-cart bg-glo-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">Añadir al carrito</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Perfumes Section -->
+  <section id="perfumes" class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12 text-glo-black">PERFUMES</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Perfume 1 -->
+        <div class="product-card bg-white rounded-lg overflow-hidden" data-id="7" data-name="Dior Sauvage" data-price="39.99" data-category="perfumes">
+          <div class="relative overflow-hidden h-64">
+            <img src="https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcQj0k5olcmx2VzcurPIvPAwl2EvBoqJSEtiK8YxSicjP5_KCK8TpjRjqjmpXCuq5bbE79dqoE9P3tdyOONTfBcIQs2ONtfdK6TWR-hruyO1sxH27HxhVT1GBJg"
+                 alt="Dior Sauvage" class="w-full h-full object-contain p-4">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Dior Sauvage</h3>
+            <p class="text-gray-600 mb-4">Frescura y elegancia</p>
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-lg">$39.99</span>
+              <button class="add-to-cart bg-glo-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">Añadir al carrito</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Perfume 2 -->
+        <div class="product-card bg-white rounded-lg overflow-hidden" data-id="8" data-name="Creed Aventus" data-price="39.99" data-category="perfumes">
+          <div class="relative overflow-hidden h-64">
+            <img src="https://www.nadiaperfumeria.com/images/cms/product/aventus.gif"
+                 alt="Creed Aventus" class="w-full h-full object-contain p-4">
+            <div class="absolute top-4 right-4 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+              EXCLUSIVO</div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Creed Aventus</h3>
+            <p class="text-gray-600 mb-4">Fragancia icónica</p>
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-lg">$39.99</span>
+              <button class="add-to-cart bg-glo-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">Añadir al carrito</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Perfume 3 -->
+        <div class="product-card bg-white rounded-lg overflow-hidden" data-id="9" data-name="Creed Millésime Impérial" data-price="39.99" data-category="perfumes">
+          <div class="relative overflow-hidden h-64">
+            <img src="https://cdn.grupoelcorteingles.es/SGFM/dctm/MEDIA03/202201/26/00113511305776____5__967x1200.jpg?impolicy=Resize&width=967&height=1200"
+                 alt="Creed Millésime Impérial" class="w-full h-full object-contain p-4">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Creed Millésime Impérial</h3>
+            <p class="text-gray-600 mb-4">Fragancia refrescante</p>
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-lg">$39.99</span>
+              <button class="add-to-cart bg-glo-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">Añadir al carrito</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tech Section -->
+  <section id="tech" class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12 text-glo-black">TECNOLOGÍA</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Tech 1 -->
+        <div class="product-card bg-white rounded-lg overflow-hidden" data-id="10" data-name="AirPods Pro 2" data-price="49.99" data-category="tech">
+          <div class="relative overflow-hidden h-64">
+            <img src="https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/MTJV3?wid=1144&hei=1144&fmt=jpeg&qlt=90&.v=1694014871985"
+                 alt="AirPods Pro 2" class="w-full h-full object-contain p-4">
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">AirPods Pro 2</h3>
+            <p class="text-gray-600 mb-4">Cancelación activa de ruido</p>
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-lg">$49.99</span>
+              <button class="add-to-cart bg-glo-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">Añadir al carrito</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tech 2 -->
+        <div class="product-card bg-white rounded-lg overflow-hidden" data-id="11" data-name="AirPods Max" data-price="79.99" data-category="tech">
+          <div class="relative overflow-hidden h-64">
+            <img src="https://tienda.bananacomputer.com/cms/uploads/webp/EA93BA82-1B27-4E0A-8711-C488B425A328-750-sjklhz.webp"
+                 alt="AirPods Max" class="w-full h-full object-contain p-4">
+            <div class="absolute top-4 right-4 bg-purple-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+              PREMIUM</div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">AirPods Max</h3>
+            <p class="text-gray-600 mb-4">Experiencia de sonido superior</p>
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-lg">$79.99</span>
+              <button class="add-to-cart bg-glo-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">Añadir al carrito</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contacto" class="py-16 bg-glo-black text-glo-white">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12">CONTACTO</h2>
+
+      <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-xl font-semibold mb-4">Información de contacto</h3>
+          <p class="mb-4"><i class="fas fa-map-marker-alt mr-2"></i> Calle Principal 123, Ciudad</p>
+          <p class="mb-4"><i class="fas fa-phone mr-2"></i> +34 640 55 93 53</p>
+          <p class="mb-4"><i class="fas fa-envelope mr-2"></i> glostore@gmail.com</p>
+
+          <h3 class="text-xl font-semibold mt-8 mb-4">Síguenos</h3>
+          <div class="flex space-x-4">
+            <a href="https://instagram.com/glo_store_" target="_blank"
+              class="instagram-btn text-white w-10 h-10 rounded-full flex items-center justify-center">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.tiktok.com/@glo.store_" target="_blank" class="tiktok-btn text-white w-10 h-10 rounded-full flex items-center justify-center">
+              <i class="fab fa-tiktok"></i>
+            </a>
+            <a href="#" class="bg-blue-400 text-white w-10 h-10 rounded-full flex items-center justify-center">
+              <i class="fab fa-twitter"></i>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4">Envía un mensaje</h3>
+          <form>
+            <div class="mb-4">
+              <label for="name" class="block mb-2">Nombre</label>
+              <input type="text" id="name" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-gray-600">
+            </div>
+            <div class="mb-4">
+              <label for="email" class="block mb-2">Email</label>
+              <input type="email" id="email" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-gray-600">
+            </div>
+            <div class="mb-4">
+              <label for="message" class="block mb-2">Mensaje</label>
+              <textarea id="message" rows="4" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-gray-600"></textarea>
+            </div>
+            <button type="submit" class="bg-white text-glo-black px-6 py-2 font-semibold rounded hover:bg-gray-200 transition">Enviar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-400 py-8">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-4 md:mb-0">
+          <h2 class="text-2xl font-bold text-white">GLO STORE</h2>
+          <p class="mt-2">Productos exclusivos para clientes exigentes</p>
+        </div>
+        <div class="flex space-x-6">
+          <a href="#inicio" class="hover:text-white transition">Inicio</a>
+          <a href="#productos" class="hover:text-white transition">Productos</a>
+          <a href="#contacto" class="hover:text-white transition">Contacto</a>
+          <a href="#" class="hover:text-white transition">Términos y condiciones</a>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+        <p>&copy; 2023 Glo Store. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Carrito de compras
+    let cart = [];
+    let currentUser = null;
+    
+    // Función para actualizar el carrito en la UI
+    function updateCartUI() {
+      const cartItemsContainer = document.getElementById('cartItems');
+      const cartBadge = document.getElementById('cartBadge');
+      const cartTotal = document.getElementById('cartTotal');
+      
+      // Limpiar el contenedor
+      cartItemsContainer.innerHTML = '';
+      
+      // Si el carrito está vacío
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<p class="text-gray-500">Tu carrito está vacío</p>';
+        cartBadge.classList.add('hidden');
+        return;
+      }
+      
+      // Mostrar los productos en el carrito
+      let total = 0;
+      cart.forEach(item => {
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item flex justify-between items-center';
+        cartItem.innerHTML = `
+          <div>
+            <h4 class="font-medium">${item.name}</h4>
+            <p class="text-sm text-gray-600">$${item.price} x ${item.quantity}</p>
+          </div>
+          <div class="flex items-center">
+            <span class="font-semibold">$${(item.price * item.quantity).toFixed(2)}</span>
+            <button class="remove-from-cart ml-2 text-red-500" data-id="${item.id}">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        `;
+        cartItemsContainer.appendChild(cartItem);
+        
+        total += item.price * item.quantity;
+      });
+      
+      // Actualizar total y badge
+      cartTotal.textContent = `$${total.toFixed(2)}`;
+      cartBadge.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+      cartBadge.classList.remove('hidden');
+      cartBadge.classList.add('cart-badge');
+      
+      // Eliminar la clase de animación después de que termine
+      setTimeout(() => {
+        cartBadge.classList.remove('cart-badge');
+      }, 500);
+    }
+    
+    // Función para agregar producto al carrito
+    function addToCart(productId, productName, productPrice) {
+      const existingItem = cart.find(item => item.id === productId);
+      
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({
+          id: productId,
+          name: productName,
+          price: parseFloat(productPrice),
+          quantity: 1
+        });
+      }
+      
+      // Guardar en localStorage
+      localStorage.setItem('cart', JSON.stringify(cart));
+      
+      // Actualizar UI
+      updateCartUI();
+      
+      // Mostrar notificación
+      alert(`${productName} ha sido añadido al carrito`);
+    }
+    
+    // Función para eliminar producto del carrito
+    function removeFromCart(productId) {
+      cart = cart.filter(item => item.id !== productId);
+      
+      // Guardar en localStorage
+      localStorage.setItem('cart', JSON.stringify(cart));
+      
+      // Actualizar UI
+      updateCartUI();
+    }
+    
+    // Función para vaciar el carrito
+    function clearCart() {
+      cart = [];
+      localStorage.removeItem('cart');
+      updateCartUI();
+    }
+    
+    // Función de búsqueda
+    function searchProducts(query) {
+      const products = Array.from(document.querySelectorAll('.product-card'));
+      const searchResults = document.getElementById('searchResults');
+      
+      // Limpiar resultados anteriores
+      searchResults.innerHTML = '';
+      
+      // Si la consulta está vacía, ocultar resultados
+      if (query.trim() === '') {
+        searchResults.style.display = 'none';
+        return;
+      }
+      
+      // Filtrar productos que coincidan con la consulta
+      const matchedProducts = products.filter(product => {
+        const name = product.dataset.name.toLowerCase();
+        return name.includes(query.toLowerCase());
+      });
+      
+      // Mostrar resultados
+      if (matchedProducts.length > 0) {
+        matchedProducts.forEach(product => {
+          const resultItem = document.createElement('div');
+          resultItem.className = 'search-result';
+          resultItem.innerHTML = `
+            <a href="#${product.dataset.category}" class="block" onclick="scrollToProduct('${product.dataset.id}')">
+              ${product.dataset.name} - $${product.dataset.price}
+            </a>
+          `;
+          searchResults.appendChild(resultItem);
+        });
+        searchResults.style.display = 'block';
+      } else {
+        searchResults.innerHTML = '<p class="p-4 text-gray-500">No se encontraron productos</p>';
+        searchResults.style.display = 'block';
+      }
+    }
+    
+    // Función para desplazarse a un producto específico
+    function scrollToProduct(productId) {
+      const productElement = document.querySelector(`.product-card[data-id="${productId}"]`);
+      if (productElement) {
+        productElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Resaltar el producto
+        productElement.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.5)';
+        setTimeout(() => {
+          productElement.style.boxShadow = '';
+        }, 2000);
+      }
+      
+      // Ocultar resultados de búsqueda
+      document.getElementById('searchResults').style.display = 'none';
+    }
+    
+    // Función para mostrar/ocultar el modal de autenticación
+    function toggleAuthModal() {
+      const modal = document.getElementById('authModal');
+      modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+    }
+    
+    // Función para cambiar entre pestañas de login/signup
+    function switchAuthTab(tabName) {
+      // Cambiar pestañas activas
+      document.querySelectorAll('.auth-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.tab === tabName);
+      });
+      
+      // Cambiar formularios activos
+      document.querySelectorAll('.auth-form').forEach(form => {
+        form.classList.toggle('active', form.id === `${tabName}Form`);
+      });
+    }
+    
+    // Función para validar contraseña
+    function validatePassword(password) {
+      // Validar longitud
+      const lengthValid = password.length >= 8;
+      document.getElementById('lengthReq').classList.toggle('valid', lengthValid);
+      document.getElementById('lengthReq').classList.toggle('invalid', !lengthValid);
+      
+      // Validar mayúscula
+      const uppercaseValid = /[A-Z]/.test(password);
+      document.getElementById('uppercaseReq').classList.toggle('valid', uppercaseValid);
+      document.getElementById('uppercaseReq').classList.toggle('invalid', !uppercaseValid);
+      
+      // Validar carácter especial
+      const specialValid = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+      document.getElementById('specialReq').classList.toggle('valid', specialValid);
+      document.getElementById('specialReq').classList.toggle('invalid', !specialValid);
+      
+      return lengthValid && uppercaseValid && specialValid;
+    }
+    
+    // Función para mostrar el modal de checkout
+    function showCheckoutModal() {
+      if (cart.length === 0) {
+        alert('Tu carrito está vacío');
+        return;
+      }
+      
+      // Verificar si el usuario está logueado
+      if (!currentUser) {
+        alert('Por favor inicia sesión para continuar con la compra');
+        toggleAuthModal();
+        return;
+      }
+      
+      const modal = document.getElementById('checkoutModal');
+      const checkoutItems = document.getElementById('checkoutItems');
+      const checkoutTotal = document.getElementById('checkoutTotal');
+      
+      // Limpiar items anteriores
+      checkoutItems.innerHTML = '';
+      
+      // Agregar items al checkout
+      let total = 0;
+      cart.forEach(item => {
+        const itemElement = document.createElement('div');
+        itemElement.className = 'checkout-item';
+        itemElement.innerHTML = `
+          <span>${item.name} x${item.quantity}</span>
+          <span>$${(item.price * item.quantity).toFixed(2)}</span>
+        `;
+        checkoutItems.appendChild(itemElement);
+        
+        total += item.price * item.quantity;
+      });
+      
+      // Mostrar total
+      checkoutTotal.innerHTML = `Total: $${total.toFixed(2)}`;
+      
+      // Mostrar modal
+      modal.style.display = 'flex';
+    }
+    
+    // Función para ocultar el modal de checkout
+    function hideCheckoutModal() {
+      document.getElementById('checkoutModal').style.display = 'none';
+    }
+    
+    // Función para procesar el pago
+    function processPayment() {
+      // Aquí iría la lógica real de procesamiento de pago
+      // Por ahora simulamos un pago exitoso
+      alert('¡Pago procesado con éxito! Gracias por tu compra.');
+      
+      // Vaciar el carrito
+      clearCart();
+      
+      // Ocultar modal
+      hideCheckoutModal();
+    }
+    
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      // Cargar carrito desde localStorage si existe
+      const savedCart = localStorage.getItem('cart');
+      if (savedCart) {
+        cart = JSON.parse(savedCart);
+        updateCartUI();
+      }
+      
+      // Cargar usuario desde localStorage si existe
+      const savedUser = localStorage.getItem('currentUser');
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+      }
+      
+      // Botones de añadir al carrito
+      document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', (e) => {
+          const productCard = e.target.closest('.product-card');
+          addToCart(
+            productCard.dataset.id,
+            productCard.dataset.name,
+            productCard.dataset.price
+          );
+        });
+      });
+      
+      // Mostrar/ocultar carrito
+      const cartButton = document.getElementById('cartButton');
+      const cartDropdown = document.getElementById('cartDropdown');
+      
+      cartButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        cartDropdown.style.display = cartDropdown.style.display === 'block' ? 'none' : 'block';
+      });
+      
+      // Botón de autenticación
+      document.getElementById('authButton').addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleAuthModal();
+      });
+      
+      // Cambiar pestañas en el modal de autenticación
+      document.querySelectorAll('.auth-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          switchAuthTab(tab.dataset.tab);
+        });
+      });
+      
+      // Validación de contraseña en tiempo real
+      document.getElementById('signupPassword').addEventListener('input', (e) => {
+        validatePassword(e.target.value);
+      });
+      
+      // Confirmación de contraseña
+      document.getElementById('confirmPassword').addEventListener('input', (e) => {
+        const password = document.getElementById('signupPassword').value;
+        const confirmPassword = e.target.value;
+        const errorElement = document.getElementById('passwordMatchError');
+        
+        if (password !== confirmPassword) {
+          errorElement.classList.remove('hidden');
+        } else {
+          errorElement.classList.add('hidden');
+        }
+      });
+      
+      // Formulario de registro
+      document.getElementById('signupForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('signupEmail').value;
+        const password = document.getElementById('signupPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        // Validar contraseña
+        if (!validatePassword(password)) {
+          alert('La contraseña no cumple con los requisitos');
+          return;
+        }
+        
+        // Validar que las contraseñas coincidan
+        if (password !== confirmPassword) {
+          alert('Las contraseñas no coinciden');
+          return;
+        }
+        
+        // Registrar usuario (simulado)
+        currentUser = { email };
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        
+        alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
+        switchAuthTab('login');
+        document.getElementById('loginEmail').value = email;
+      });
+      
+      // Formulario de login
+      document.getElementById('loginForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        // Verificar credenciales (simulado)
+        const savedUser = localStorage.getItem('currentUser');
+        if (savedUser) {
+          const user = JSON.parse(savedUser);
+          if (user.email === email) {
+            currentUser = user;
+            alert('¡Inicio de sesión exitoso!');
+            toggleAuthModal();
+            return;
+          }
+        }
+        
+        // Mostrar error si las credenciales son incorrectas
+        document.getElementById('loginError').classList.remove('hidden');
+      });
+      
+      // Cerrar modales al hacer clic fuera
+      document.addEventListener('click', (e) => {
+        // Cerrar carrito al hacer clic fuera
+        if (!cartButton.contains(e.target) && !cartDropdown.contains(e.target)) {
+          cartDropdown.style.display = 'none';
+        }
+        
+        // Cerrar resultados de búsqueda al hacer clic fuera
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+          searchResults.style.display = 'none';
+        }
+        
+        // Cerrar modal de autenticación al hacer clic fuera
+        const authModal = document.getElementById('authModal');
+        const authContainer = document.querySelector('.auth-container');
+        
+        if (authModal.style.display === 'flex' && !authContainer.contains(e.target) && e.target !== document.getElementById('authButton')) {
+          toggleAuthModal();
+        }
+        
+        // Cerrar modal de checkout al hacer clic fuera
+        const checkoutModal = document.getElementById('checkoutModal');
+        const checkoutContainer = document.querySelector('.checkout-container');
+        
+        if (checkoutModal.style.display === 'flex' && !checkoutContainer.contains(e.target)) {
+          hideCheckoutModal();
+        }
+      });
+      
+      // Eliminar productos del carrito
+      document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-from-cart') || e.target.closest('.remove-from-cart')) {
+          const button = e.target.classList.contains('remove-from-cart') ? e.target : e.target.closest('.remove-from-cart');
+          removeFromCart(button.dataset.id);
+        }
+      });
+      
+      // Vaciar carrito
+      document.getElementById('clearCartBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        if (confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
+          clearCart();
+        }
+      });
+      
+      // Finalizar compra
+      document.getElementById('checkoutBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        showCheckoutModal();
+      });
+      
+      // Cancelar checkout
+      document.getElementById('cancelCheckout').addEventListener('click', (e) => {
+        e.preventDefault();
+        hideCheckoutModal();
+      });
+      
+      // Confirmar pago
+      document.getElementById('confirmCheckout').addEventListener('click', (e) => {
+        e.preventDefault();
+        processPayment();
+      });
+      
+      // Cambiar método de pago
+      document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+          // Ocultar todos los formularios de pago
+          document.getElementById('creditCardForm').classList.add('hidden');
+          document.getElementById('paypalForm').classList.add('hidden');
+          document.getElementById('bankTransferForm').classList.add('hidden');
+          
+          // Mostrar el formulario correspondiente
+          if (radio.id === 'creditCard') {
+            document.getElementById('creditCardForm').classList.remove('hidden');
+          } else if (radio.id === 'paypal') {
+            document.getElementById('paypalForm').classList.remove('hidden');
+          } else if (radio.id === 'bankTransfer') {
+            document.getElementById('bankTransferForm').classList.remove('hidden');
+          }
+          
+          // Actualizar estilos de los métodos de pago
+          document.querySelectorAll('.payment-method').forEach(method => {
+            method.classList.remove('selected');
+          });
+          
+          radio.closest('.payment-method').classList.add('selected');
+        });
+      });
+      
+      // Búsqueda de productos
+      const searchInput = document.getElementById('searchInput');
+      searchInput.addEventListener('input', (e) => {
+        searchProducts(e.target.value);
+      });
+      
+      // Mobile menu toggle
+      document.querySelector('button').addEventListener('click', function() {
+        const nav = document.querySelector('nav');
+        nav.classList.toggle('hidden');
+        nav.classList.toggle('flex');
+        nav.classList.toggle('flex-col');
+        nav.classList.toggle('absolute');
+        nav.classList.toggle('top-16');
+        nav.classList.toggle('left-0');
+        nav.classList.toggle('right-0');
+        nav.classList.toggle('bg-glo-black');
+        nav.classList.toggle('p-4');
+        nav.classList.toggle('space-y-4');
+      });
+    });
+  </script>
+</body>
+</html>
